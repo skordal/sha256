@@ -2,7 +2,7 @@
 -- Kristian Klomsten Skordal <kristian.skordal@wafflemail.net>
 
 -- This module only operates on full 512 bit blocks. Any input data must have
--- been previously hashed.
+-- been previously padded.
 
 library ieee;
 use ieee.std_logic_1164.all;
