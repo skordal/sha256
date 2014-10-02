@@ -22,7 +22,7 @@ entity sha256 is
 
 		-- Connections to the input buffer; we assume block RAM that presents
 		-- valid data the cycle after the address has changed:
-		word_address : out std_logic_vector(3 downto 0); -- Word 0 .. 16
+		word_address : out std_logic_vector(3 downto 0); -- Word 0 .. 15
 		word_input   : in std_logic_vector(31 downto 0);
 
 		-- Intermediate/final hash values:
