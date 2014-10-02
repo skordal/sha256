@@ -69,44 +69,45 @@ begin
 			current_iteration <= (others => '0');
 			state <= IDLE;
 		elsif rising_edge(clk) then
-			if state = IDLE then
-				-- If new data is available, start hashing it:
-				if update = '1' then
-					a <= h0;
-					b <= h1;
-					c <= h2;
-					d <= h3;
-					e <= h4;
-					f <= h5;
-					g <= h6;
-					h <= h7;
-					state <= BUSY;
-				end if;
-			elsif state = BUSY then
-				-- Load a word of data and store it into the expanded message schedule:
-				W(index(current_iteration)) <= schedule(word_input, W, current_iteration);
+			case state is
+				when IDLE =>
+					-- If new data is available, start hashing it:
+					if update = '1' then
+						a <= h0;
+						b <= h1;
+						c <= h2;
+						d <= h3;
+						e <= h4;
+						f <= h5;
+						g <= h6;
+						h <= h7;
+						state <= BUSY;
+					end if;
+				when BUSY =>
+					-- Load a word of data and store it into the expanded message schedule:
+					W(index(current_iteration)) <= schedule(word_input, W, current_iteration);
 
-				-- Run an interation of the compression function:
-				compress(a, b, c, d, e, f, g, h, schedule(word_input, W, current_iteration),
+					-- Run an interation of the compression function:
+					compress(a, b, c, d, e, f, g, h, schedule(word_input, W, current_iteration),
 					constants(index(current_iteration)));
 
-				if current_iteration = b"111111" then
-					state <= FINAL;
-				else
-					current_iteration <= std_logic_vector(unsigned(current_iteration) + 1);
-				end if;
-			else -- state = FINAL
-				h0 <= std_logic_vector(unsigned(a) + unsigned(h0));
-				h1 <= std_logic_vector(unsigned(b) + unsigned(h1));
-				h2 <= std_logic_vector(unsigned(c) + unsigned(h2));
-				h3 <= std_logic_vector(unsigned(d) + unsigned(h3));
-				h4 <= std_logic_vector(unsigned(e) + unsigned(h4));
-				h5 <= std_logic_vector(unsigned(f) + unsigned(h5));
-				h6 <= std_logic_vector(unsigned(g) + unsigned(h6));
-				h7 <= std_logic_vector(unsigned(h) + unsigned(h7));
-				state <= IDLE;
-				current_iteration <= (others => '0');
-			end if;
+					if current_iteration = b"111111" then
+						state <= FINAL;
+					else
+						current_iteration <= std_logic_vector(unsigned(current_iteration) + 1);
+					end if;
+				when FINAL =>
+					h0 <= std_logic_vector(unsigned(a) + unsigned(h0));
+					h1 <= std_logic_vector(unsigned(b) + unsigned(h1));
+					h2 <= std_logic_vector(unsigned(c) + unsigned(h2));
+					h3 <= std_logic_vector(unsigned(d) + unsigned(h3));
+					h4 <= std_logic_vector(unsigned(e) + unsigned(h4));
+					h5 <= std_logic_vector(unsigned(f) + unsigned(h5));
+					h6 <= std_logic_vector(unsigned(g) + unsigned(h6));
+					h7 <= std_logic_vector(unsigned(h) + unsigned(h7));
+					state <= IDLE;
+					current_iteration <= (others => '0');
+			end case;
 		end if;
 	end process hasher;
 
