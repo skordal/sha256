@@ -82,6 +82,7 @@ begin
 						f <= h5;
 						g <= h6;
 						h <= h7;
+						current_iteration <= (others => '0');
 						state <= BUSY;
 					end if;
 				when BUSY =>
@@ -107,7 +108,6 @@ begin
 					h6 <= std_logic_vector(unsigned(g) + unsigned(h6));
 					h7 <= std_logic_vector(unsigned(h) + unsigned(h7));
 					state <= IDLE;
-					current_iteration <= (others => '0');
 			end case;
 		end if;
 	end process hasher;
