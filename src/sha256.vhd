@@ -14,8 +14,9 @@ use work.sha256_functions.all;
 
 entity sha256 is
 	port(
-		clk   : in std_logic;
-		reset : in std_logic;
+		clk    : in std_logic;
+		reset  : in std_logic;
+		enable : in std_logic;
 
 		ready  : out std_logic; -- Ready to process the next block
 		update : in  std_logic; -- Start processing the next block
@@ -62,13 +63,13 @@ begin
 
 	debug_port <= (others => '0'); -- This is currently not used, yay :-)
 
-	hasher: process(clk, reset)
+	hasher: process(clk, reset, enable)
 	begin
 		if reset = '1' then
 			reset_intermediate(h0, h1, h2, h3, h4, h5, h6, h7);
 			current_iteration <= (others => '0');
 			state <= IDLE;
-		elsif rising_edge(clk) then
+		elsif rising_edge(clk) and enable = '1' then
 			case state is
 				when IDLE =>
 					-- If new data is available, start hashing it:
