@@ -58,9 +58,8 @@ begin
 		when (current_iteration and b"110000") = b"000000"
 		else (others => '0');
 
-	ready <= '1' when state = IDLE else '0';
 	hash_output <= h0 & h1 & h2 & h3 & h4 & h5 & h6 & h7;
-
+	ready <= '1' when state = IDLE else '0';
 	debug_port <= (others => '0'); -- This is currently not used, yay :-)
 
 	hasher: process(clk, reset, enable)
@@ -90,8 +89,9 @@ begin
 					W(index(current_iteration)) <= schedule(word_input, W, current_iteration);
 
 					-- Run an interation of the compression function:
-					compress(a, b, c, d, e, f, g, h, schedule(word_input, W, current_iteration),
-					constants(index(current_iteration)));
+					compress(a, b, c, d, e, f, g, h,
+						schedule(word_input, W, current_iteration),
+						constants(index(current_iteration)));
 
 					if current_iteration = b"111111" then
 						state <= FINAL;
